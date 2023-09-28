@@ -13,19 +13,39 @@ outfile = sys.argv[3]
 # create an empty list for where to put high quality matches
 # iterate over each line and sepearte the columns by removing the newline char at the end and delimiting by tab
 # set the criteria for results that you want to keep (>30% match, covering >90 of the query length)
-# retain the subject start and end postitions
-blast_keep = []
-for line in fin_blast.readlines():
-    results = line.strip().split("\t")
-    if float(results[2]) > 30 and int(results[3]) > (0.9*int(results[12])):
-        blast_keep.append((results[8], results[9]))
+# retain the subject start and end postitions and removing orientation effect
+# blast_keep = []
+blast_dict = {}
+for line in fin_blast.readlines(): # .readlines() is a method of our open file object
+    results = line.strip().split("\t") # strip away trailing newlines, then split the str
+    if float(results[2]) >= 30 and int(results[3]) >= (0.9*int(results[12])):
+        blast_id = results[1]
+        blast_right = min(results[8], results[9])
+        blast_left = max(results[8], results[9])
+        if blast_id in blast_dict: # does the key already exist
+            blast_dict[blast_id].append([blast_right, blast_left]) # lookup the list associated with blast_id and append the left and right positions to that list
+        else: # if not, add it with a list as the left/right position values
+            blast_dict[blast_id] = ([blast_right, blast_left])
 
 
 
-print(blast_keep)
+print(blast_dict)
+        # blast_keep.append((results[1], blast_right, blast_left))
+# print(blast_keep)
+
+bed_file=[]
+for line in fin_bed.readlines():
+    columns = line.strip().split("\t")
+    bed_file.append((columns[1], columns[2], columns[3]))
 
 
-bed_file = fin_bed.readlines()
+# bed_dict = {}
+# for line in fin_bed.readlines(): 
+#     weight, treatment = line.strip().split("\t") 
+#     if treatment in treatment_weights_dict: # does the key already exist
+#         treatment_weights_dict[treatment].append(weight) # lookup the list associated with treatment and append this weight to that list
+#     else: # if not, add it with a list as the value
+#         treatment_weights_dict[treatment] = [weight]
 
 #tblastn with selection criteria
 #save the 9th column (subjust start location in the blast) of the output to the blast_out temp file

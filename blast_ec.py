@@ -6,7 +6,7 @@ import sys
 #rename command line inputs to something meaningful
 fin_blast = open(sys.argv[1])
 fin_bed = open(sys.argv[2])
-outfile = sys.argv[3]
+
 
 
 # create an empty list for where to put high quality matches
@@ -44,5 +44,12 @@ for blast_seq in blast_list: # iterate over the blast_list
                     if bed_seq[3] not in gene_list: # only add unique gene names to the list
                         gene_list.append(bed_seq[3])
 
-print(gene_list)
 print(len(gene_list))
+
+# convert gene_list to str in order to write to file
+gene_str = ""
+for gene in gene_list:
+    gene_str += gene + "\n" # add the gene to the string, add a new line after each gene
+outfile = open(sys.argv[3], 'w') # 'w' mode means we will write to the file
+outfile.write(gene_str)
+outfile.close()

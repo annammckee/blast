@@ -14,10 +14,10 @@ outfile = sys.argv[3]
 blast_list = []
 for line in fin_blast.readlines():# .readlines() is a method of our open file object
     columns = line.strip().split("\t") # strip away trailing newlines, then split the str
-    if float(columns[2]) >= 30 and int(columns[3]) >= (0.9*int(columns[12])): # set the criteria for results that you want to keep (>30% match, covering >90 of the query length)
+    if float(columns[2]) > 30 and float(columns[3]) >= (0.9*float(columns[12])): # set the criteria for results that you want to keep (>30% match, covering >90 of the query length)
         blast_id = columns[1] #2nd column is the blast sequence ID
-        blast_left = min(columns[8], columns[9]) # retain the subject start and end postitions and removing orientation effect
-        blast_right = max(columns[8], columns[9])
+        blast_left = int(columns[8]) # retain the subject start and end postitions and convert to int
+        blast_right = int(columns[9])
         blast_list.append([blast_id, blast_left, blast_right])
 
 
@@ -26,8 +26,8 @@ bed_list = []
 for line in fin_bed.readlines(): # .readlines() is a method of our open file object
      columns = line.strip().split("\t") # strip away trailing newlines, then split the str
      bed_id = columns[0] # bed seq ID column
-     bed_left = min(columns[1], columns[2]) # retain the subject start and end postitions and removing orientation effect
-     bed_right = max(columns[1], columns[2])
+     bed_left = int(columns[1]) # retain the subject start and end postitions, covert to int
+     bed_right = int(columns[2])
      gene = columns[3] # gene name
      bed_list.append([bed_id, bed_left, bed_right, gene])
 
